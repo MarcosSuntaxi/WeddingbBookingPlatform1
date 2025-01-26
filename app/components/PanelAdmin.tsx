@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 type Usuario = {
@@ -33,7 +32,7 @@ export default function PanelAdmin() {
       } else {
         setError("Error al obtener la lista de usuarios")
       }
-    } catch (err) {
+    } catch (_error) {
       setError("Ocurrió un error al obtener la lista de usuarios")
     }
   }
@@ -49,11 +48,11 @@ export default function PanelAdmin() {
         body: JSON.stringify(usuarioActualizado),
       })
       if (response.ok) {
-        fetchUsuarios() // Actualizar la lista de usuarios
+        fetchUsuarios()
       } else {
         setError("Error al actualizar el usuario")
       }
-    } catch (err) {
+    } catch (_error) {
       setError("Ocurrió un error al actualizar el usuario")
     }
   }
@@ -67,11 +66,11 @@ export default function PanelAdmin() {
         },
       })
       if (response.ok) {
-        fetchUsuarios() // Actualizar la lista de usuarios
+        fetchUsuarios()
       } else {
         setError("Error al eliminar el usuario")
       }
-    } catch (err) {
+    } catch (_error) {
       setError("Ocurrió un error al eliminar el usuario")
     }
   }

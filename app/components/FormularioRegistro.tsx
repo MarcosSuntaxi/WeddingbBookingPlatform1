@@ -31,16 +31,16 @@ export default function FormularioRegistro() {
         const data = await response.json()
         setError(data.message || "Ocurrió un error durante el registro")
       }
-    } catch (err) {
+    } catch (_error) {
       setError("Ocurrió un error. Por favor, intenta de nuevo.")
     }
   }
 
   return (
-    <Card className="w-[350px] bg-white bg-opacity-90 backdrop-blur-md">
+    <Card className="w-[350px]">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Regístrate</CardTitle>
-        <CardDescription className="text-center">Crea tu cuenta para planificar tu boda</CardDescription>
+        <CardTitle>Registrar Nuevo Usuario</CardTitle>
+        <CardDescription>Crea una nueva cuenta de usuario</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit}>
@@ -64,12 +64,15 @@ export default function FormularioRegistro() {
               />
             </div>
           </div>
-          {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
+          {error && <p className="text-red-500 mt-2">{error}</p>}
         </form>
       </CardContent>
-      <CardFooter>
-        <Button className="w-full bg-pink-500 hover:bg-pink-600" onClick={handleSubmit}>
-          Registrarse
+      <CardFooter className="flex justify-between">
+        <Button variant="outline" onClick={() => router.back()}>
+          Cancelar
+        </Button>
+        <Button type="submit" onClick={handleSubmit}>
+          Registrar
         </Button>
       </CardFooter>
     </Card>
