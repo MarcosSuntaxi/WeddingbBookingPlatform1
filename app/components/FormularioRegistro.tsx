@@ -1,81 +1,110 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-export default function FormularioRegistro() {
-  const [nombre, setNombre] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+type Usuario = {
+  id: string
+  nombre: string
+  email: string
+  rol: string
+}
+
+export default function PanelAdmin() {
+  const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [error, setError] = useState("")
-  const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+  useEffect(() => {
+    fetchUsuarios()
+  }, [])
 
+  const fetchUsuarios = async () => {
     try {
       const response = await fetch("/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre, email, password }),
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       })
-
       if (response.ok) {
-        router.push("/login")
-      } else {
         const data = await response.json()
-        setError(data.message || "Ocurrió un error durante el registro")
+        setUsuarios(data)
+      } else {
+        setError("Error al obtener la lista de usuarios")
       }
-    } catch (_error) {
-      setError("Ocurrió un error. Por favor, intenta de nuevo.")
+    } catch {
+      setError("Ocurrió un error al obtener la lista de usuarios")
+    }
+  }
+
+  const handleUpdate = async (id: string, usuarioActualizado: Partial<Usuario>) => {
+    try {
+      const response = await fetch(`/api/users/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(usuarioActualizado),
+      })
+      if (response.ok) {
+        fetchUsuarios()
+      } else {
+        setError("Error al actualizar el usuario")
+      }
+    } catch {
+      setError("Ocurrió un error al actualizar el usuario")
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch(`/api/users/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      if (response.ok) {
+        fetchUsuarios()
+      } else {
+        setError("Error al eliminar el usuario")
+      }
+    } catch {
+      setError("Ocurrió un error al eliminar el usuario")
     }
   }
 
   return (
-    <Card className="w-[350px]">
-      <CardHeader>
-        <CardTitle>Registrar Nuevo Usuario</CardTitle>
-        <CardDescription>Crea una nueva cuenta de usuario</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit}>
-          <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="nombre">Nombre</Label>
-              <Input id="nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="password">Contraseña</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          {error && <p className="text-red-500 mt-2">{error}</p>}
-        </form>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button variant="outline" onClick={() => router.back()}>
-          Cancelar
-        </Button>
-        <Button type="submit" onClick={handleSubmit}>
-          Registrar
-        </Button>
-      </CardFooter>
-    </Card>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Panel de Administración</h1>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nombre</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Rol</TableHead>
+            <TableHead>Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {usuarios.map((usuario) => (
+            <TableRow key={usuario.id}>
+              <TableCell>{usuario.nombre}</TableCell>
+              <TableCell>{usuario.email}</TableCell>
+              <TableCell>{usuario.rol}</TableCell>
+              <TableCell>
+                <Button onClick={() => handleUpdate(usuario.id, { nombre: "Nombre Actualizado" })}>Actualizar</Button>
+                <Button variant="destructive" onClick={() => handleDelete(usuario.id)}>
+                  Eliminar
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   )
 }
 

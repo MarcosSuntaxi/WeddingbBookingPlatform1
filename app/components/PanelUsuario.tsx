@@ -38,7 +38,7 @@ export default function PanelUsuario() {
       } else {
         setError("Error al obtener el perfil de usuario")
       }
-    } catch (err) {
+    } catch {
       setError("Ocurrió un error al obtener el perfil de usuario")
     }
   }
@@ -57,11 +57,11 @@ export default function PanelUsuario() {
         body: JSON.stringify({ nombre, email, password }),
       })
       if (response.ok) {
-        fetchPerfilUsuario() // Actualizar datos del usuario
+        fetchPerfilUsuario()
       } else {
         setError("Error al actualizar el perfil")
       }
-    } catch (err) {
+    } catch {
       setError("Ocurrió un error al actualizar el perfil")
     }
   }
@@ -96,10 +96,11 @@ export default function PanelUsuario() {
         </form>
       </CardContent>
       <CardFooter>
-        <Button type="submit">Actualizar Perfil</Button>
+        <Button type="submit" onClick={handleUpdate}>
+          Actualizar Perfil
+        </Button>
       </CardFooter>
     </Card>
   )
 }
-
 

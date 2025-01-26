@@ -32,7 +32,7 @@ export default function PanelAdmin() {
       } else {
         setError("Error al obtener la lista de usuarios")
       }
-    } catch (_error) {
+    } catch {
       setError("Ocurrió un error al obtener la lista de usuarios")
     }
   }
@@ -52,7 +52,7 @@ export default function PanelAdmin() {
       } else {
         setError("Error al actualizar el usuario")
       }
-    } catch (_error) {
+    } catch {
       setError("Ocurrió un error al actualizar el usuario")
     }
   }
@@ -70,7 +70,7 @@ export default function PanelAdmin() {
       } else {
         setError("Error al eliminar el usuario")
       }
-    } catch (_error) {
+    } catch {
       setError("Ocurrió un error al eliminar el usuario")
     }
   }
