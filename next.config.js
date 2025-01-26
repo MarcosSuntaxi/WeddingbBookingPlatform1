@@ -1,18 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
-    experimental: {
-      serverActions: true,
-    },
-    async rewrites() {
-      return []
-    },
-    // Add port configuration
-    devServer: {
-      port: 3000,
-    },
-  }
-  
-  module.exports = nextConfig
-  
-  
+  reactStrictMode: true,
+  experimental: {
+    serverActions: true,
+  },
+  devServer: {
+    port: 4000, // Cambia el puerto aquí
+  },
+};
+
+module.exports = nextConfig;
