@@ -18,48 +18,67 @@ export default function FormularioLogin() {
     setError("")
 
     try {
-      // Aquí iría la lógica de autenticación
-      console.log("Iniciando sesión con:", email, password)
-      // Por ahora, simplemente redirigimos al panel de usuario
-      router.push("/panel-usuario")
-    } catch (err) {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        localStorage.setItem("token", data.token)
+
+        if (data.role === "administrator") {
+          router.push("/panel-admin")
+        } else {
+          router.push("/panel-usuario")
+        }
+      } else {
+        setError("Email o contraseña inválidos")
+      }
+    } catch (_error) {
       setError("Ocurrió un error. Por favor, intenta de nuevo.")
     }
   }
 
   return (
-    <Card className="w-[350px] bg-white bg-opacity-90 backdrop-blur-md">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl text-center">Bienvenido</CardTitle>
-        <CardDescription className="text-center">Ingresa a tu cuenta para gestionar tu boda</CardDescription>
+    <Card className="w-[350px]">
+      <CardHeader>
+        <CardTitle>Iniciar Sesión</CardTitle>
+        <CardDescription>Accede a tu cuenta de reservas de boda</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4">
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="tu@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="password">Contraseña</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+      <CardContent>
+        <form onSubmit={handleSubmit}>
+          <div className="grid w-full items-center gap-4">
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="tu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="password">Contraseña</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Ingresa tu contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          {error && <p className="text-red-500 mt-2">{error}</p>}
+        </form>
       </CardContent>
-      <CardFooter>
-        <Button className="w-full bg-pink-500 hover:bg-pink-600" onClick={handleSubmit}>
+      <CardFooter className="flex justify-between">
+        <Button variant="outline">Cancelar</Button>
+        <Button type="submit" onClick={handleSubmit}>
           Iniciar Sesión
         </Button>
       </CardFooter>
